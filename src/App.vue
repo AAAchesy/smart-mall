@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div class="box"></div>
     <van-button type="primary">主要按钮</van-button>
     <van-button type="info">信息按钮</van-button>
     <van-button type="default">默认按钮</van-button>
@@ -22,5 +23,9 @@ export default {
 </script>
 
 <style lang="less">
-
+.box{
+  width: 300px;
+  height: 300px;
+  background-color: black;
+}
 </style>
