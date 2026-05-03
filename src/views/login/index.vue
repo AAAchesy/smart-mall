@@ -9,7 +9,7 @@
 
       <div class="form">
         <div class="form-item">
-          <input class="inp" maxlength="11" placeholder="请输入手机号码" type="text">
+          <input v-model="mobile" class="inp" maxlength="11" placeholder="请输入手机号码" type="text">
         </div>
         <div class="form-item">
           <input v-model="picCode" class="inp" maxlength="5" placeholder="请输入图形验证码" type="text">
@@ -17,7 +17,9 @@
         </div>
         <div class="form-item">
           <input class="inp" placeholder="请输入短信验证码" type="text">
-          <button>获取验证码</button>
+          <button @click="getCode">
+            {{ seconds === totalSeconds ? '获取验证码' : seconds+'秒后重新发送' }}
+          </button>
         </div>
       </div>
 
@@ -27,7 +29,7 @@
 </template>
 
 <script>
-import { getPicCode } from '@/api/login'
+import { getMsgCode, getPicCode } from '@/api/login'
 // import { Toast } from 'vant'
 
 export default {
@@ -36,7 +38,13 @@ export default {
     return {
       picCode: '',
       picUrl: '',
-      picKey: ''
+      picKey: '',
+
+      totalSeconds: 60,
+      seconds: 60,
+      timer: null,
+
+      mobile: ''
     }
   },
   created () {
@@ -50,7 +58,40 @@ export default {
 
       // Toast('获取图形验证码成功')
       this.$toast.success('获取图形验证码成功')
+    },
+    validFn () {
+      if (!/^1[3-9]\d{9}$/.test(this.mobile)) {
+        this.$toast('请输入正确的手机号')
+        return false
+      }
+      if (!/^\w{4}$/.test(this.picCode)) {
+        this.$toast('请输入正确的验证码')
+        return false
+      }
+      return true
+    },
+    async getCode () {
+      if (!this.validFn()) {
+        return
+      }
+      if (!this.timer && this.seconds === this.totalSeconds) {
+        await getMsgCode(this.picCode, this.picKey, this.mobile)
+        this.$toast('发送成功，请注意查收')
+
+        this.timer = setInterval(() => {
+          this.seconds--
+
+          if (this.seconds <= 0) {
+            clearInterval(this.timer)
+            this.seconds = this.totalSeconds
+            this.timer = null
+          }
+        }, 1000)
+      }
     }
+  },
+  destroyed () {
+    clearInterval(this.timer)
   }
 }
 </script>
