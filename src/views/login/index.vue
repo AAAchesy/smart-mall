@@ -16,20 +16,20 @@
           <img v-if="picUrl" :src="picUrl" @click="getPicCode" alt="">
         </div>
         <div class="form-item">
-          <input class="inp" placeholder="请输入短信验证码" type="text">
+          <input v-model="msgCode" class="inp" placeholder="请输入短信验证码" type="text">
           <button @click="getCode">
             {{ seconds === totalSeconds ? '获取验证码' : seconds+'秒后重新发送' }}
           </button>
         </div>
       </div>
 
-      <div class="login-btn">登录</div>
+      <div @click="login" class="login-btn">登录</div>
     </div>
   </div>
 </template>
 
 <script>
-import { getMsgCode, getPicCode } from '@/api/login'
+import { codeLogin, getMsgCode, getPicCode } from '@/api/login'
 // import { Toast } from 'vant'
 
 export default {
@@ -44,7 +44,9 @@ export default {
       seconds: 60,
       timer: null,
 
-      mobile: ''
+      mobile: '',
+
+      msgCode: ''
     }
   },
   created () {
@@ -88,7 +90,20 @@ export default {
           }
         }, 1000)
       }
+    },
+    async login () {
+      if (!this.validFn()) {
+        return
+      }
+      if (!/^\d{6}$/.test(this.msgCode)) {
+        this.$toast('请输入正确的验证码')
+      }
+      const res = await codeLogin(this.mobile, this.msgCode)
+      console.log(res)
+      this.$toast('登录成功')
+      this.$router.push('/')
     }
+
   },
   destroyed () {
     clearInterval(this.timer)
