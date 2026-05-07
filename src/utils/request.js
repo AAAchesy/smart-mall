@@ -10,6 +10,13 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
+  Toast.loading({
+    message: '加载中...',
+    forbidClick: true,
+    loadingType: 'spinner',
+    duration: 0
+  })
+
   return config
 }, function (error) {
   // 对请求错误做些什么
@@ -24,6 +31,9 @@ instance.interceptors.response.use(function (response) {
     Toast(response.message)
     return Promise.reject(response.message)
   }
+
+  Toast.clear()
+
   return response.data
 }, function (error) {
   // 超出 2xx 范围的状态码都会触发该函数。
