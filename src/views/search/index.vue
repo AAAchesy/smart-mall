@@ -43,6 +43,8 @@ export default {
       this.history.unshift(key)
 
       setHistoryList(this.history)
+
+      this.$router.push(`/searchlist?search=${key}`)
     },
     clear () {
       this.history = []
