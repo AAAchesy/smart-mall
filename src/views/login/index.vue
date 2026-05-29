@@ -102,7 +102,9 @@ export default {
       this.$store.commit('user/setUserInfo', res.data)
       console.log(res)
       this.$toast('登录成功')
-      this.$router.push('/')
+
+      const url = this.$route.query.backUrl || '/'
+      this.$router.replace(url)
     }
 
   },
