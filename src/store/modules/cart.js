@@ -1,4 +1,5 @@
-import { changeCount, getCartList } from '@/api/cart'
+import { changeCount, delSelect, getCartList } from '@/api/cart'
+import { Toast } from 'vant'
 
 export default {
   namespaced: true,
@@ -17,7 +18,7 @@ export default {
     },
     toggleAllCheck (state, flag) {
       state.cartList.forEach(item => {
-        item.isChecked = !flag
+        item.isChecked = flag
       })
     },
     changeCount (state, { goodsId, goodsNum }) {
@@ -42,6 +43,17 @@ export default {
 
       // 再同步到后台
       await changeCount(goodsId, goodsNum, goodsSkuId)
+    },
+    // 删除购物车数据
+    async delSelect (context) {
+      const selCartList = context.getters.selCartList
+      const cartIds = selCartList.map(item => item.id)
+      await delSelect(cartIds)
+
+      Toast('删除成功')
+
+      // 重新拉取最新的购物车数据（重新渲染）
+      context.dispatch('getCartAction')
     }
   },
   getters: {
