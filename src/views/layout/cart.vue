@@ -21,7 +21,7 @@
           <span class="tit text-ellipsis-2">{{item.goods.goods_name}}</span>
           <span class="bottom">
             <div class="price">¥ <span>{{item.goods.goods_price_min}}</span></div>
-            <count-box :value="item.goods_num"></count-box>
+            <count-box @input="(value) =>changeCount(value, item.goods_id, item.goods_sku_id)" :value="item.goods_num"></count-box>
           </span>
         </div>
       </div>
@@ -69,6 +69,13 @@ export default {
     },
     toggleAllCheck () {
       this.$store.commit('cart/toggleAllCheck', this.isAllChecked)
+    },
+    changeCount (goodsNum, goodsId, goodsSkuId) {
+      this.$store.dispatch('cart/changeCountAction', {
+        goodsNum,
+        goodsId,
+        goodsSkuId
+      })
     }
   }
 }
