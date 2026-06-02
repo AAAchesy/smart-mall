@@ -120,6 +120,15 @@ export default {
     },
     cardIds () {
       return this.$route.query.cardIds
+    },
+    goodsId () {
+      return this.$route.query.goodsId
+    },
+    goodsSkuId () {
+      return this.$route.query.goodsSkuId
+    },
+    goodsNum () {
+      return this.$route.query.goodsNum
     }
   },
   created () {
@@ -132,12 +141,22 @@ export default {
       this.addressList = list
     },
     async getOrderList () {
-      const res = await checkOrder(this.mode, {
-        cardIds: this.cardIds
-      })
-      console.log(res)
-      // this.order = order
-      // this.personal = personal
+      if (this.mode === 'cart') {
+        const { data: { order, personal } } = await checkOrder(this.mode, {
+          cardIds: this.cardIds
+        })
+        this.order = order
+        this.personal = personal
+      }
+      if (this.mode === 'buyNow') {
+        const { data: { order, personal } } = await checkOrder(this.mode, {
+          goodsId: this.goodsId,
+          goodsSkuId: this.goodsSkuId,
+          goodsNum: this.goodsNum
+        })
+        this.order = order
+        this.personal = personal
+      }
     }
   }
 
