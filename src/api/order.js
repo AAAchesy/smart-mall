@@ -14,3 +14,17 @@ export const checkOrder = (mode, obj) => {
     }
   })
 }
+
+// 订单提交
+// mode: carNt => obj { cartIds remark }
+// mode: buyNow => obj { goodsId goodsum goodsSkuId}
+export const submitOrder = (mode, obj) => {
+  return request.post('/checkout/submit', {
+    mode, // cart buyNow
+    delivery: 10, // 10 快递配送 20 门店自提
+    couponId: 0, // 优惠券ID 传0 不使用优惠券
+    isUsePoints: 0, // 积分 传0 不使用积分
+    payType: 10, // 余额支付
+    ...obj // 将传递过来的参数对象 动态展开
+  })
+}
